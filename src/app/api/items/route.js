@@ -12,10 +12,11 @@ export async function GET() {
 export async function POST(request) {
   // create a connection ....
   await connectDb();
-  const { name, type, unit } = await request.json();
+  const { name, type, brand, unit } = await request.json();
   const item = new ItemSchema({
     name: name,
     type: type,
+    brand: brand,
     unit: unit,
   });
   try {
@@ -38,12 +39,13 @@ export async function POST(request) {
 export async function PUT(request) {
   // create a connection ....
   await connectDb();
-  const { _id, name, type, StokePresent, StokeSold, StokeBuyed, unit } =
+  const { _id, name, type, brand, StokePresent, StokeSold, StokeBuyed, unit } =
     await request.json();
   try {
     const item = await ItemSchema.findByIdAndUpdate(_id, {
       name: name,
       type: type,
+      brand: brand,
       StokePresent: StokePresent,
       StokeSold: StokeSold,
       StokeBuyed: StokeBuyed,

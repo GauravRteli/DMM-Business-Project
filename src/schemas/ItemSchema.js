@@ -8,6 +8,10 @@ const ItemSchema = new Schema({
     type: String,
     required: true,
   },
+  brand: {
+    type: String,
+    required: true,
+  },
   StokePresent: {
     type: Number,
     default: 0.0,
