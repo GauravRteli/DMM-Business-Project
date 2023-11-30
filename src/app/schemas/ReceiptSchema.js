@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
-const Item = require("@/schemas/ItemSchema")
+const Item = require("@/app/schemas/ItemSchema");
 const Schema = mongoose.Schema;
 const ReceiptSchema = new mongoose.Schema({
+  nameOfCustomer: { type: String, required: true },
+  cityOfCustomer: { type: String, required: true },
   date: {
     type: Date,
     default: Date.now,
@@ -13,6 +15,7 @@ const ReceiptSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: Item,
       },
+      quantity: { type: Number, required: true },
       price: { type: Number, required: true },
     },
   ],

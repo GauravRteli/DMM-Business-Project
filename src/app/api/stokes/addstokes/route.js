@@ -1,14 +1,14 @@
-const ItemSchema = require("@/schemas/ItemSchema");
+const ItemSchema = require("@/app/schemas/ItemSchema");
 import { NextResponse } from "next/server";
 import { connectDb } from "@/database/db";
 
 export async function POST(request) {
   await connectDb();
-  const { itemId, item_count } = await request.json();
+  const { itemId, quantity } = await request.json();
   try {
     const item = await ItemSchema.findByIdAndUpdate(
       itemId,
-      { $inc: { StokePresent: item_count } },
+      { $inc: { StokePresent: quantity } },
       { new: true }
     );
     return NextResponse.json(item, {

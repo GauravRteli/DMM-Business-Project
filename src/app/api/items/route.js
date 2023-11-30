@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDb } from "@/database/db";
-const ItemSchema = require("@/schemas/ItemSchema");
+const ItemSchema = require("@/app/schemas/ItemSchema");
 
 // Get All items ....
 export async function GET() {

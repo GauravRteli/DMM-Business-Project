@@ -1,13 +1,13 @@
-const ItemSchema = require("@/schemas/ItemSchema");
+const ItemSchema = require("@/app/schemas/ItemSchema");
 import { NextResponse } from "next/server";
 import { connectDb } from "@/database/db";
 
 export async function POST(request) {
   await connectDb();
-  const { itemId, item_count } = await request.json();
+  const { itemId, quantity } = await request.json();
   try {
     const itemToChange = await ItemSchema.findById(itemId);
-    if (itemToChange.StokePresent < item_count) {
+    if (itemToChange.StokePresent < quantity) {
       return NextResponse.json(
         {
           message:
@@ -20,7 +20,7 @@ export async function POST(request) {
     } else {
       const item = await ItemSchema.findByIdAndUpdate(
         itemId,
-        { $inc: { StokePresent: item_count * -1 } },
+        { $inc: { StokePresent: quantity * -1 } },
         { new: true }
       );
       return NextResponse.json(item, {
