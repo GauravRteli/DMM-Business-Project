@@ -1,0 +1,36 @@
+
+***** if you want to add it in component ...
+
+import { Helmet } from "react-helmet";
+
+const AnalyticsComponent = () => {
+  return (
+    <div>
+      <Helmet>
+        <script src="/example/script.js" />
+      </Helmet>
+    </div>
+  );
+};
+
+***** in root layout
+
+import { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
+
+export default function Document() {
+  return (
+    <Html>
+      <Head />
+      <body>
+        <Main />
+        <NextScript />
+        <Script
+          src="https://example-website/script.js"
+          onError={() => setHasError(true)}
+          onReady={() => setIsReady(true)}
+        />
+      </body>
+    </Html>
+  );
+}

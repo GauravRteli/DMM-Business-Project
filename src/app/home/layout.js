@@ -2,8 +2,6 @@ import CustomNavbar from "@/components/CustomNavbar";
 import Footer from "@/components/Footer";
 import Logobar from "@/components/Logobar";
 import { Inter } from "next/font/google";
-import "@/app/globals.css"
-import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -18,11 +16,10 @@ export default function RootLayout({ children }) {
         className={`backdrop-blur-md ${inter.className} bg-slate-300 w-full md:w-10/12 m-auto `}
       >
         <Logobar />
+        <CustomNavbar />
         {children}
         <Footer />
-        <Script
-          src="https://unpkg.com/flowbite@1.5.1/dist/flowbite.js"
-        />
+        <script src="https://unpkg.com/flowbite@1.5.1/dist/flowbite.js"></script>
       </body>
       
     </html>
