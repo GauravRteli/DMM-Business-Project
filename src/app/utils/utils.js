@@ -34,19 +34,37 @@ export const removeStokesFunc = async (itemId, quantity) => {
   );
   return response;
 };
+export const addStokesFunc = async (itemId, quantity) => {
+  const response = await axios.post(
+    "http://localhost:3000/api/stokes/addstokes",
+    {
+      itemId: itemId,
+      quantity: quantity,
+      status : "returnedByCustomer"
+    }
+  );
+  return response;
+};
 
-export const updateStokes = async (itemId, quantity) => {
-  if (quantity > 0) {
-    const response = await axios.post(
-      "http://localhost:3000/api/stokes/addstokes",
-      {
-        itemId: itemId,
-        quantity: quantity,
-      }
-    );
-    return response;
-  } else {
-    const response = await removeStokesFunc(itemId, quantity * -1);
-    return response;
+export const updateStokes = async (itemId, quantity, todo) => {
+  var response;
+  if (todo === "removestokepresent") {
+    response = await removeStokesFunc(itemId, quantity);
+    console.log("buyedByCustomer")
+    response = await axios.put("http://localhost:3000/api/items/updatestokessold", {
+      itemId: itemId,
+      quantity: quantity,
+      status: "buyedByCustomer",
+    });
+  } else if (todo === "addstokepresent") {
+    response = await addStokesFunc(itemId, quantity);
+    console.log("returnedByCustomer")
+    response = await axios.put("http://localhost:3000/api/items/updatestokessold", {
+      itemId: itemId,
+      quantity: quantity,
+      status: "returnedByCustomer",
+    });
   }
+
+  return response;
 };

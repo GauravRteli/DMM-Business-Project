@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
-import "./globals.css";
-import krishnaimg from "../../assets/krishnaimg1.jpg";
+import "./globals.css"
 // Flowbite
 export default function Home() {
   return (

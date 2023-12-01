@@ -3,7 +3,11 @@ import ReceiptSchema from "@/app/schemas/ReceiptSchema";
 import { NextResponse } from "next/server";
 import { connectDb } from "@/database/db";
 import axios from "axios";
-import { checkConsistency, removeStokesFunc } from "@/app/utils/utils";
+import {
+  checkConsistency,
+  removeStokesFunc,
+  updateStokes,
+} from "@/app/utils/utils";
 const ItemSchema = require("@/app/schemas/ItemSchema");
 
 export async function GET() {
@@ -37,7 +41,7 @@ export async function POST(request) {
     // first remove the stokes from the items database .....
     items.map(async (i) => {
       try {
-        await removeStokesFunc(i.item, i.quantity);
+        await updateStokes(i.item, i.quantity, "removestokepresent");
       } catch (error) {
         console.log(error);
         return NextResponse.json(
@@ -65,7 +69,8 @@ export async function POST(request) {
 
 export async function PUT(request) {
   await connectDb();
-  const { receiptId, nameOfCustomer, cityOfCustomer , items, total } = await request.json();
+  const { receiptId, nameOfCustomer, cityOfCustomer, items, total } =
+    await request.json();
   try {
     // first to check how much more items are needed
     const currReceipt = await ReceiptSchema.findById(receiptId)
@@ -80,8 +85,12 @@ export async function PUT(request) {
     });
 
     items.map((i) => {
-      var currValue = mp.get(i.item.toString());
-      mp.set(i.item.toString(), currValue - i.quantity);
+      if (mp.has(i.item.toString())) {
+        var currValue = mp.get(i.item.toString());
+        mp.set(i.item.toString(), currValue - i.quantity);
+      } else {
+        mp.set(i.item.toString(), 0 - i.quantity);
+      }
     });
 
     const isConsistent = await checkConsistency(mp);
@@ -99,10 +108,11 @@ export async function PUT(request) {
     // then update the stokes of the item in the database ..... !
 
     mp.forEach(async (value, key) => {
-      await axios.post("http://localhost:3000/api/stokes/addstokes", {
-        itemId: key,
-        quantity: value,
-      });
+      if (value < 0) {
+        await updateStokes(key, value * -1, "removestokepresent");
+      }else{
+        await updateStokes(key, value, "addstokepresent");
+      }
     });
 
     // then update the receipt .... !
