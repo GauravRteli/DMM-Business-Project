@@ -1,9 +1,6 @@
 import React from "react";
-import fbicon from "../../assets/fb-icon.png";
-import instaicon from "../../assets/insta-icon.png";
 import { TiSocialFacebookCircular } from "react-icons/ti";
 import { TiSocialInstagram } from "react-icons/ti";
-import Image from "next/image";
 const Logobar = () => {
   return (
     <div className="py-5 flex justify-between items-center px-4 md:px-0">

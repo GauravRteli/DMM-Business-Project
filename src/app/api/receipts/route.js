@@ -1,11 +1,9 @@
-import mongoose from "mongoose";
 import ReceiptSchema from "@/app/schemas/ReceiptSchema";
 import { NextResponse } from "next/server";
 import { connectDb } from "@/database/db";
 import axios from "axios";
 import {
   checkConsistency,
-  removeStokesFunc,
   updateStokes,
 } from "@/app/utils/utils";
 const ItemSchema = require("@/app/schemas/ItemSchema");

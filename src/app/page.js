@@ -20,11 +20,8 @@ const Home = () => {
           type="button"
           className="text-white ease-in-out bg-slate-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
         >
-          <Link href={"/home"} className="space-x-1 flex justify-around">
-              <p>Sign In</p>{" "}
-              <p className="hover:translate-x-1 duration-300 ease-in-out">
-                {"->"}
-              </p>
+          <Link href={"/signin"} className="">
+              <p>Get Started</p>
           </Link>
         </button>
       </div>
