@@ -29,6 +29,9 @@ const ItemSchema = new Schema(
       type: String,
       required: true,
     },
+    noofpiecesperpacket:{
+      type: Number,
+    }
   },
   { timestamps: true }
 );

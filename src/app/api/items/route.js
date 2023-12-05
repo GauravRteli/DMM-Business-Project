@@ -12,12 +12,13 @@ export async function GET() {
 export async function POST(request) {
   // create a connection ....
   await connectDb();
-  const { name, type, brand, unit } = await request.json();
+  const { name, type, brand, unit, noofpiecesperpacket } = await request.json();
   const item = new ItemSchema({
     name: name,
     type: type,
     brand: brand,
     unit: unit,
+    noofpiecesperpacket: noofpiecesperpacket
   });
   try {
     const itemCreated = await item.save();

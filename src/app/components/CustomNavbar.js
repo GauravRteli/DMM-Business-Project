@@ -88,12 +88,12 @@ const CustomNavbar = () => {
                     aria-labelledby="dropdownLargeButton"
                   >
                     <li>
-                      <a
-                        href="#"
+                      <Link
+                        href="/additems"
                         className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         Add Item Stocks
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <a
@@ -199,10 +199,7 @@ const CustomNavbar = () => {
               </li>
             </ul>
           </div>
-          {
-            isLoggedIn ? <div><Profile /></div> : <Register />
-          }
-          
+          <div className="">{isLoggedIn ? <Profile username={"GauravTeli"}  email={"gauravteli134@gmail.com"}/> : <Register />}</div>
         </div>
       </nav>
     </>
