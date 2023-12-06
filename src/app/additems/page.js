@@ -1,18 +1,38 @@
 "use client";
 import React, { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import { metalOptions } from "../utils/formvalidation";
+import axios from "axios";
+import Select from "react-select";
 
 const AddItems = () => {
   const [itemData, setItemData] = useState({
     name: "",
-    type: "United States",
+    type: null,
     brand: "",
     unit: "kg",
     noofpiecesperpacket: 0,
   });
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(itemData);
+    const response = await axios.post("http://localhost:3000/api/items", {
+      ...itemData,
+      type: itemData.type.value,
+    });
+    if (response.status === 500) {
+      toast.error(response.data.message);
+    } else {
+      toast.success("SuccessFully Added the item !");
+      setItemData({
+        name: "",
+        type: null,
+        brand: "",
+        unit: "kg",
+        noofpiecesperpacket: 0,
+      });
+      console.log(response.data);
+    }
   };
   return (
     <div className="">
@@ -40,6 +60,7 @@ const AddItems = () => {
                 name: e.target.value,
               })
             }
+            required
           />
         </div>
         <div className="mb-5">
@@ -60,6 +81,7 @@ const AddItems = () => {
                 brand: e.target.value,
               })
             }
+            required
           />
         </div>
         <label
@@ -68,23 +90,20 @@ const AddItems = () => {
         >
           Item Type
         </label>
-        <select
-          id="item-type"
+        <Select
+          options={metalOptions}
+          isSearchable
           value={itemData.type}
-          onChange={(e) =>
+          onChange={(selectedValue) => {
             setItemData({
               ...itemData,
-              type: e.target.value,
-            })
-          }
-          className="bg-gray-50 mb-5 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          <option>United States</option>
-          <option>Canada</option>
-          <option>France</option>
-          <option>Germany</option>
-        </select>
-
+              type: selectedValue,
+            });
+          }}
+          className="bg-gray-50 custom-select mb-5 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          classNamePrefix="custom-select"
+          required
+        />
         <fieldset>
           <legend className="sr-only">Countries</legend>
 
@@ -166,6 +185,7 @@ const AddItems = () => {
             <input
               id="numberInput"
               type="number"
+              min={1}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               onChange={(e) =>
                 setItemData({
@@ -173,6 +193,7 @@ const AddItems = () => {
                   noofpiecesperpacket: e.target.value,
                 })
               }
+              required
               value={itemData.noofpiecesperpacket}
             />
           </div>

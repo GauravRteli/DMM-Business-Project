@@ -1,7 +1,5 @@
-import CustomNavbar from "@/app/components/CustomNavbar";
-import Profile from "@/app/components/Profile";
+import NewNavbar from "@/app/components/NewNavbar";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -13,7 +11,7 @@ export default function Home({ children }) {
   return (
     <div>
       <div>
-        <CustomNavbar />
+        <NewNavbar />
         {children}
       </div>
     </div>

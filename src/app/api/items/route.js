@@ -24,7 +24,7 @@ export async function POST(request) {
     const itemCreated = await item.save();
 
     return NextResponse.json(
-      { itemCreated },
+      itemCreated ,
       {
         status: 200,
       }

@@ -1,4 +1,3 @@
-import CustomNavbar from "@/app/components/CustomNavbar";
 import Footer from "@/app/components/Footer";
 import Logobar from "@/app/components/Logobar";
 import { Inter } from "next/font/google";
@@ -14,10 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    
-      </head>
+      <head></head>
       <body
         className={`backdrop-blur-md ${inter.className} bg-slate-300 w-full md:w-10/12 m-auto `}
       >
