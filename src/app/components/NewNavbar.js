@@ -44,13 +44,13 @@ const Navbar = () => {
               <div className="absolute mt-2 w-36 bg-white rounded p-2 text-center">
                 <Link
                   href="/additems"
-                  className="block border-b-2 px-2 py-1 rounded text-slate-700 hover:text-white hover:bg-slate-700 border-slate-300 "
+                  className="block border-b-2 px-2 py-1 rounded text-slate-700 hover:text-white hover:bg-slate-500 border-slate-300 "
                 >
                   Add Items
                 </Link>
                 <Link
-                  href="#"
-                  className="block border-b-2 px-2 py-1 rounded text-slate-700 hover:text-white hover:bg-slate-700 border-slate-300"
+                  href="/showitems"
+                  className="block border-b-2 px-2 py-1 rounded text-slate-700 hover:text-white hover:bg-slate-500 border-slate-300"
                 >
                   Show Items
                 </Link>
