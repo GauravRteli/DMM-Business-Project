@@ -54,10 +54,10 @@ const AddItems = () => {
             id="name"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             value={itemData.name}
-            onChange={(e) =>
+            onChange={(e) => 
               setItemData({
                 ...itemData,
-                name: e.target.value,
+                name: e.target.value.trim(),
               })
             }
             required
@@ -78,7 +78,7 @@ const AddItems = () => {
             onChange={(e) =>
               setItemData({
                 ...itemData,
-                brand: e.target.value,
+                brand: e.target.value.trim(),
               })
             }
             required
@@ -105,13 +105,11 @@ const AddItems = () => {
           required
         />
         <fieldset>
-          <legend className="sr-only">Countries</legend>
-
           <div className="flex items-center mb-4">
             <input
               id="country-option-1"
               type="radio"
-              name="countries"
+              name="kg"
               value="kg"
               className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
               onChange={(e) =>
@@ -133,7 +131,7 @@ const AddItems = () => {
             <input
               id="country-option-2"
               type="radio"
-              name="countries"
+              name="nos"
               value="nos"
               className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
               onChange={(e) =>

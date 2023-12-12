@@ -7,6 +7,7 @@ import Select from "react-select";
 import { GrClose } from "react-icons/gr";
 import toast, { Toaster } from "react-hot-toast";
 import { filterItems } from "@/app/utils/filterITems";
+import StockInfoBlock from "@/app/components/StokeInfo";
 
 const ShowItems = () => {
   const [itemsArray, setItemsArray] = useState({
@@ -15,21 +16,25 @@ const ShowItems = () => {
   const [originalItemArray, setOriginalItemArray] = useState({
     items: null,
   });
+  const [viewItem, setViewItem] = useState(null);
   const [filterType, setFilterType] = useState(null);
   const [options, setOptions] = useState(metalOptions);
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
 
+  const updateItemArray = (items) => {
+    setItemsArray({
+      items: items,
+    });
+    setOriginalItemArray({
+      items: items,
+    });
+  };
+
   const getItems = async () => {
     const response = await axios.get("http://localhost:3000/api/items");
     console.log(response.data);
-    setOriginalItemArray({
-      items: response.data,
-    });
-    setItemsArray({
-      ...itemsArray,
-      items: response.data,
-    });
+    updateItemArray(response.data);
   };
 
   useEffect(() => {
@@ -38,13 +43,16 @@ const ShowItems = () => {
 
   useEffect(() => {
     if (filterType !== null && filterType.value === "brand") {
-        // duplicates involved should be removed and lowercase comparision should be done !
+      // duplicates involved should be removed and lowercase comparision should be done !
       const uniqueBrandSet = new Set(
         itemsArray.items.map((item) => {
-          return { value: item.brand, label: item.brand };
+          return item.brand;
         })
       );
-      const uniqueBrandArray = Array.from(uniqueBrandSet);
+      const uniqueBrandArray = Array.from(uniqueBrandSet, (item) => ({
+        label: item,
+        value: item,
+      }));
       setOptions(uniqueBrandArray);
     } else if (filterType !== null && filterType.value === "type") {
       setOptions(metalOptions);
@@ -68,11 +76,19 @@ const ShowItems = () => {
       });
     }
   };
-
+  const searchItem = (e) => {
+    const itemname = e.target.value;
+    const filteredItems = originalItemArray.items.filter((item) =>
+      item.name.toLowerCase().startsWith(itemname.toLowerCase())
+    );
+    setItemsArray({
+      items: filteredItems
+    });
+  };
   return (
     <div>
       <Toaster />
-      <div>
+      <div className="mb-5 flex flex-col md:flex-row items-center justify-center md:justify-between">
         <button
           type="button"
           className="text-white bg-[#24292F] hover:bg-[#24292F]/90 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 mb-2"
@@ -80,6 +96,16 @@ const ShowItems = () => {
         >
           {open ? <GrClose /> : "Filter"}
         </button>
+        <div>
+          <input
+            type="text"
+            id="item_name"
+            defaultValue={""}
+            onChange={(e) => searchItem(e)}
+            className="bg-white placeholder-slate-400 border border-gray-300 text-gray-900 text-sm rounded-lg block md:w-full p-2.5"
+            placeholder="Search Item Name ..."
+          />
+        </div>
       </div>
       {open ? (
         <div className="border-b-2 border-slate-500">
@@ -138,22 +164,27 @@ const ShowItems = () => {
       ) : (
         <></>
       )}
-
+      <StockInfoBlock viewItem={viewItem} />
       <table className="min-w-full bg-white shadow-md my-5 rounded-md overflow-hidden">
         <thead className="bg-gray-100">
           <tr>
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Type</th>
-            <th className="py-2 px-4 border-b">Stock Present</th>
-            <th className="py-2 px-4 border-b">Stock Sold</th>
-            <th className="py-2 px-4 border-b">Stock Bought</th>
             <th className="py-2 px-4 border-b">Unit</th>
             <th className="py-2 px-4 border-b">pieces per packet</th>
+            <th className="py-2 px-4 border-b">Modify</th>
           </tr>
         </thead>
-        <tbody>
-          {itemsArray.items?.map((item) => {
-            return <Item key={item._id} item={item} />;
+        <tbody className="">
+          {itemsArray.items?.map((item, index) => {
+            return (
+              <Item
+                setViewItem={setViewItem}
+                updateItemArray={updateItemArray}
+                key={index}
+                item={item}
+              />
+            );
           })}
         </tbody>
       </table>

@@ -18,17 +18,14 @@ export async function POST(request) {
     type: type,
     brand: brand,
     unit: unit,
-    noofpiecesperpacket: noofpiecesperpacket
+    noofpiecesperpacket: noofpiecesperpacket,
   });
   try {
     const itemCreated = await item.save();
 
-    return NextResponse.json(
-      itemCreated ,
-      {
-        status: 200,
-      }
-    );
+    return NextResponse.json(itemCreated, {
+      status: 200,
+    });
   } catch (error) {
     console.log(error);
   }
@@ -40,18 +37,42 @@ export async function POST(request) {
 export async function PUT(request) {
   // create a connection ....
   await connectDb();
-  const { _id, name, type, brand, StokePresent, StokeSold, StokeBuyed, unit } =
-    await request.json();
+  const {
+    _id,
+    name,
+    type,
+    brand,
+    StokePresent,
+    StokeSold,
+    StokeBuyed,
+    unit,
+    noofpiecesperpacket,
+  } = await request.json();
   try {
-    const item = await ItemSchema.findByIdAndUpdate(_id, {
-      name: name,
-      type: type,
-      brand: brand,
-      StokePresent: StokePresent,
-      StokeSold: StokeSold,
-      StokeBuyed: StokeBuyed,
-      unit: unit,
-    });
+    var item;
+    if (unit === "kg" || unit === "nos") {
+      item = await ItemSchema.findByIdAndUpdate(_id, {
+        name: name,
+        type: type,
+        brand: brand,
+        StokePresent: StokePresent,
+        StokeSold: StokeSold,
+        StokeBuyed: StokeBuyed,
+        unit: unit,
+        noofpiecesperpacket: null,
+      });
+    } else {
+      item = await ItemSchema.findByIdAndUpdate(_id, {
+        name: name,
+        type: type,
+        brand: brand,
+        StokePresent: StokePresent,
+        StokeSold: StokeSold,
+        StokeBuyed: StokeBuyed,
+        unit: unit,
+        noofpiecesperpacket: noofpiecesperpacket,
+      });
+    }
     return NextResponse.json(item, {
       status: 200,
     });
@@ -65,14 +86,18 @@ export async function PUT(request) {
 }
 export async function DELETE(request) {
   await connectDb();
-  const { _id } = await request.json();
-
+  console.log("request reached");
+  const { id } = await request.json();
+  console.log(id);
   try {
-    const item = await ItemSchema.findByIdAndDelete(_id);
+    await ItemSchema.findByIdAndDelete(id);
 
-    return NextResponse.json(item, {
-      status: 200,
-    });
+    return NextResponse.json(
+      { message: `Item (${id}) Got deleted` },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     console.log(error);
   }

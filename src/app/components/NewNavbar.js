@@ -49,6 +49,12 @@ const Navbar = () => {
                   Add Items
                 </Link>
                 <Link
+                  href="/addstokes"
+                  className="block border-b-2 px-2 py-1 rounded text-slate-700 hover:text-white hover:bg-slate-500 border-slate-300 "
+                >
+                  Add Stokes
+                </Link>
+                <Link
                   href="/showitems"
                   className="block border-b-2 px-2 py-1 rounded text-slate-700 hover:text-white hover:bg-slate-500 border-slate-300"
                 >
@@ -68,10 +74,10 @@ const Navbar = () => {
             {menu2Open && (
               <div className="absolute mt-2 w-36 bg-white rounded p-2 text-center">
                 <Link
-                  href="#"
+                  href="/addreceipt"
                   className="block border-b-2 px-2 py-1 rounded text-black hover:text-white hover:bg-slate-700 border-slate-300 "
                 >
-                  Add Items
+                  Add Receipt
                 </Link>
                 <Link
                   href="#"
@@ -100,7 +106,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden space-y-2 absolute text-center top-36 left-0 bg-gray-800 p-2 rounded w-full">
+          <div className="md:hidden space-y-2 absolute text-center top-36 left-0 bg-gray-800 p-2 w-full">
             <Link href="#" className="block text-white">
               Home
             </Link>
