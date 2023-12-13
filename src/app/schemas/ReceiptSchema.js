@@ -19,6 +19,11 @@ const ReceiptSchema = new mongoose.Schema({
       price: { type: Number, required: true },
     },
   ],
+  charges: {
+    GST: { type: Number, required: true },
+    packageCharges: { type: Number, required: true },
+    total: { type: Number, required: true },
+  },
   total: { type: Number, required: true },
 });
 

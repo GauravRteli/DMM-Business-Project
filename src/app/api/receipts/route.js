@@ -2,10 +2,7 @@ import ReceiptSchema from "@/app/schemas/ReceiptSchema";
 import { NextResponse } from "next/server";
 import { connectDb } from "@/database/db";
 import axios from "axios";
-import {
-  checkConsistency,
-  updateStokes,
-} from "@/app/utils/utils";
+import { checkConsistency, updateStokes } from "@/app/utils/utils";
 const ItemSchema = require("@/app/schemas/ItemSchema");
 
 export async function GET() {
@@ -33,7 +30,8 @@ export async function GET() {
 
 export async function POST(request) {
   await connectDb();
-  const { nameOfCustomer, cityOfCustomer, items, total } = await request.json();
+  const { nameOfCustomer, cityOfCustomer, charges, items, total } =
+    await request.json();
   console.log(items, total);
   try {
     // first remove the stokes from the items database .....
@@ -52,6 +50,7 @@ export async function POST(request) {
       nameOfCustomer: nameOfCustomer,
       cityOfCustomer: cityOfCustomer,
       items: items,
+      charges: charges,
       total: total,
     });
     const createdReceipt = await receipt.save();
@@ -67,7 +66,7 @@ export async function POST(request) {
 
 export async function PUT(request) {
   await connectDb();
-  const { receiptId, nameOfCustomer, cityOfCustomer, items, total } =
+  const { receiptId, nameOfCustomer, cityOfCustomer, charges, items, total } =
     await request.json();
   try {
     // first to check how much more items are needed
@@ -108,7 +107,7 @@ export async function PUT(request) {
     mp.forEach(async (value, key) => {
       if (value < 0) {
         await updateStokes(key, value * -1, "removestokepresent");
-      }else{
+      } else {
         await updateStokes(key, value, "addstokepresent");
       }
     });
@@ -120,6 +119,7 @@ export async function PUT(request) {
         nameOfCustomer: nameOfCustomer,
         cityOfCustomer: cityOfCustomer,
         items: items,
+        charges: charges,
         total: total,
       },
       { new: true }

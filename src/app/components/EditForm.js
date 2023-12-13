@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { metalOptions } from "../utils/formvalidation";
 import axios from "axios";
-import Select from "react-select";
 
 const EditForm = ({ editingItem, setEditPopupOpen, updateItemArray }) => {
   const [itemData, setItemData] = useState(editingItem);

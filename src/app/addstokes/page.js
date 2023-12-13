@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 import Select from "react-select";
+import { getAllItems } from "@/app/utils/apiFunc";
 
 const page = () => {
   const [itemsOptionsArray, setItemsOptionsArray] = useState([]);
@@ -12,13 +13,8 @@ const page = () => {
     status: "buyedByOwner",
   });
   const id = Date.now().toString();
-  const getAllItems = async () => {
-    const response = await axios.get("http://localhost:3000/api/items");
-    const itemsOptArray = Array.from(response.data, (item) => ({
-      label: item.name,
-      value: item._id,
-    }));
-
+  const getItems = async () => {
+    const itemsOptArray = await getAllItems();
     setItemsOptionsArray(itemsOptArray);
   };
 
@@ -43,7 +39,7 @@ const page = () => {
   };
 
   useEffect(() => {
-    getAllItems();
+    getItems();
   }, []);
 
   return (
@@ -54,7 +50,6 @@ const page = () => {
       </p>
       <div className="w-2/5 m-auto my-10">
         <Select
-          id={id}
           options={itemsOptionsArray}
           isSearchable
           value={itemData.itemId}
