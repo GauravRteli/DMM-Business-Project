@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getAllItems } from "@/app/utils/apiFunc";
-import Select from "react-select";
 import ReceiptItem from "../components/ReceiptItem";
-import { redirect } from "next/dist/server/api-utils";
+import { validateReceipt } from "../utils/formvalidation";
+import toast, { Toaster } from "react-hot-toast";
 const AddReceipt = () => {
   const [itemsOptArray, setItemsOptArray] = useState({
     items: [],
@@ -18,17 +18,29 @@ const AddReceipt = () => {
       packageCharges: 0,
       total: 0,
     },
+    paymentStatus: {
+      status: "pending",
+      paid: 0,
+    },
     total: 0,
   });
+
+  useEffect(() => {
+    console.log(receiptData);
+  }, [receiptData]);
+
+  const countTotalCharges = (tot) => {
+    var totalCharges =
+      (tot * parseFloat(receiptData.charges.GST)) / 100 +
+      parseFloat(receiptData.charges.packageCharges);
+    return totalCharges;
+  };
   const countTotal = (items) => {
     var tot = 0;
     items.map((item) => {
       tot += item.price * item.quantity;
     });
-    var totalCharges =
-      (tot * parseInt(receiptData.charges.GST)) / 100 +
-      parseInt(receiptData.charges.packageCharges);
-    console.log(totalCharges);
+    var totalCharges = countTotalCharges(tot);
     return {
       tot: tot,
       totalCharges,
@@ -46,9 +58,9 @@ const AddReceipt = () => {
       items: updatingItems,
       charges: {
         ...receiptData.charges,
-        total: totalCharges,
+        total: parseFloat(totalCharges),
       },
-      total: tot,
+      total: parseFloat(tot),
     });
     return total;
   };
@@ -65,9 +77,9 @@ const AddReceipt = () => {
       items: filteredItems,
       charges: {
         ...receiptData.charges,
-        total: totalCharges
+        total: totalCharges,
       },
-      total: tot,
+      total: parseFloat(tot),
     });
   };
   const addBlankItem = () => {
@@ -88,12 +100,24 @@ const AddReceipt = () => {
       items: itemsArray,
     });
   };
+
+  const addReceipt = async () => {
+    if (validateReceipt(receiptData)) {
+      toast.success("The Receipt is Valid !");
+    } else {
+      toast.error("Plz fill up the red blocks !",{
+        ariaLive: 'assertive'
+      });
+    }
+  };
+
   useEffect(() => {
     getItems();
   }, []);
 
   return (
     <div>
+      <Toaster position="bottom-center" reverseOrder={false} />
       <form className=" max-w-7xl mx-auto">
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-5">
@@ -113,7 +137,12 @@ const AddReceipt = () => {
                   nameOfCustomer: e.target.value,
                 })
               }
-              className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              aria-live="assertive"
+              className={`bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                receiptData.nameOfCustomer === ""
+                  ? "bg-red-200 border-red-500"
+                  : ""
+              }`}
             />
           </div>
           <div className="mb-5">
@@ -133,7 +162,11 @@ const AddReceipt = () => {
                   cityOfCustomer: e.target.value,
                 })
               }
-              className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className={`bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                receiptData.cityOfCustomer === ""
+                  ? "bg-red-200 border-red-500"
+                  : ""
+              } `}
             />
           </div>
         </div>
@@ -190,14 +223,37 @@ const AddReceipt = () => {
             <input
               type="number"
               id="gst"
-              className="bg-gray-50 col-span-2 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className={`bg-gray-50 col-span-2 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                receiptData.charges.GST === ""
+                  ? "bg-red-200 border-red-500"
+                  : ""
+              } `}
+              placeholder="GST Tax %"
               value={receiptData.charges.GST}
               onChange={(e) => {
+                var totalCharges;
+                if (
+                  e.target.value === "" &&
+                  receiptData.charges.packageCharges === ""
+                ) {
+                  totalCharges = 0;
+                } else if (e.target.value === "") {
+                  totalCharges =
+                    0 + parseFloat(receiptData.charges.packageCharges);
+                } else if (receiptData.charges.packageCharges === "") {
+                  totalCharges = parseFloat(e.target.value);
+                } else {
+                  totalCharges =
+                    parseFloat(receiptData.total * e.target.value) / 100 +
+                    parseFloat(receiptData.charges.packageCharges);
+                }
+
                 setReceiptData({
                   ...receiptData,
                   charges: {
                     ...receiptData.charges,
                     GST: e.target.value,
+                    total: parseFloat(totalCharges).toFixed(2),
                   },
                 });
               }}
@@ -213,19 +269,39 @@ const AddReceipt = () => {
               </label>
             </div>
             <input
-              type="text"
+              type="number"
               id="package"
-              className="bg-gray-50 col-span-2 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className={`bg-gray-50 col-span-2 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                receiptData.charges.packageCharges === ""
+                  ? "bg-red-200 border-red-500"
+                  : ""
+              } `}
+              placeholder="Package Charges"
               value={receiptData.charges.packageCharges}
+              aria-describedby="helper-text-explanation"
               onChange={(e) => {
+                var totalCharges;
+                if (e.target.value === "") {
+                  totalCharges =
+                    parseFloat(receiptData.total * receiptData.charges.GST) /
+                      100 +
+                    0;
+                } else {
+                  totalCharges =
+                    parseFloat(receiptData.total * receiptData.charges.GST) /
+                      100 +
+                    parseFloat(e.target.value);
+                }
                 setReceiptData({
                   ...receiptData,
                   charges: {
                     ...receiptData.charges,
                     packageCharges: e.target.value,
+                    total: parseFloat(totalCharges).toFixed(2),
                   },
                 });
               }}
+              required
             />
           </div>
           <div className="my-2 grid gap-4 grid-cols-3">
@@ -249,15 +325,114 @@ const AddReceipt = () => {
           </div>
           <div className="flex w-44 min-w-fit col-span-2 justify-center items-center bg-white text-green-500 border-2 border-slate-400 rounded font-bold">
             <p>
-              {parseInt(receiptData.total) +
-                parseInt(receiptData.charges.total)}
+              {(
+                parseFloat(receiptData.total) +
+                parseFloat(receiptData.charges.total)
+              ).toFixed(2)}
             </p>
+          </div>
+        </div>
+        <div className="mb-2">
+          <p className="border-b-2 border-slate-400 py-2 text-center text-2xl font-bold mt-5">
+            Payment
+          </p>
+          <div className="flex justify-between items-center py-4">
+            <fieldset className="flex space-x-5 p-2">
+              <label
+                htmlFor="paymentstatus"
+                className="block mr-2 text-lg font-bold text-gray-900 dark:text-white"
+              >
+                Payment Status :
+              </label>
+              <div className="flex items-center">
+                <input
+                  id="pending"
+                  type="radio"
+                  name="pending"
+                  value={"pending"}
+                  className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                  checked={receiptData.paymentStatus.status === "pending"}
+                  onChange={(e) => {
+                    setReceiptData({
+                      ...receiptData,
+                      paymentStatus: {
+                        ...receiptData.paymentStatus,
+                        status: e.target.value,
+                      },
+                    });
+                  }}
+                />
+                <label
+                  htmlFor="pending"
+                  className="block ms-2  text-lg font-bold text-gray-900 dark:text-gray-300"
+                >
+                  Pending
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  id="paid"
+                  type="radio"
+                  name="paid"
+                  value={"paid"}
+                  className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                  checked={receiptData.paymentStatus.status === "paid"}
+                  onChange={(e) => {
+                    setReceiptData({
+                      ...receiptData,
+                      paymentStatus: {
+                        ...receiptData.paymentStatus,
+                        status: e.target.value,
+                      },
+                    });
+                  }}
+                />
+                <label
+                  htmlFor="paid"
+                  className="block ms-2  text-lg font-bold text-gray-900 dark:text-gray-300"
+                >
+                  Paid
+                </label>
+              </div>
+            </fieldset>
+            <div className=" grid gap-4 grid-cols-3">
+              <div className="col-span-1 flex justify-end items-center">
+                <label
+                  htmlFor="package"
+                  className="block  text-right text-lg font-bold text-gray-900 dark:text-white"
+                >
+                  Total Amount Paid =
+                </label>
+              </div>
+              <input
+                type="number"
+                id="package"
+                className={`bg-gray-50 col-span-2 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                  receiptData.paymentStatus.paid === ""
+                    ? "bg-red-200 border-red-500"
+                    : ""
+                } `}
+                value={receiptData.paymentStatus.paid}
+                aria-describedby="helper-text-explanation"
+                onChange={(e) => {
+                  setReceiptData({
+                    ...receiptData,
+                    paymentStatus: {
+                      ...receiptData.paymentStatus,
+                      paid: e.target.value,
+                    },
+                  });
+                }}
+                required
+              />
+            </div>
           </div>
         </div>
         <div className="flex justify-between border-t-2 border-dashed border-slate-400 py-4">
           <button
             type="button"
             className="text-white mb-5 bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={addReceipt}
           >
             Add Receipt +
           </button>

@@ -24,6 +24,10 @@ const ReceiptSchema = new mongoose.Schema({
     packageCharges: { type: Number, required: true },
     total: { type: Number, required: true },
   },
+  paymentStatus: {
+    status: { type: Number, required: true },
+    paid: { type: Number, required: true },
+  },
   total: { type: Number, required: true },
 });
 

@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import Select from "react-select";
 
-const ReceiptItem = ({ itemsOptArray,deleteReceiptItemData, idx, updateReceiptItemData, item }) => {
+const ReceiptItem = ({
+  itemsOptArray,
+  deleteReceiptItemData,
+  idx,
+  updateReceiptItemData,
+  item,
+}) => {
   const [total, setTotal] = useState(0);
   return (
     <div className="grid grid-cols-10 mb-2 space-x-2">
@@ -36,13 +42,15 @@ const ReceiptItem = ({ itemsOptArray,deleteReceiptItemData, idx, updateReceiptIt
           type="number"
           id="number-inputq"
           aria-describedby="helper-text-explanation"
-          className="bg-gray-50 border col-span-1 border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className={`bg-gray-50 border col-span-1 border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+            item.quantity === "" ? "bg-red-200 border-red-500" : ""
+          } `}
           value={item.quantity}
           onChange={(e) => {
             var total = updateReceiptItemData(idx, "quantity", e.target.value);
             setTotal(total);
           }}
-          placeholder="90210"
+          placeholder="Quantity"
           required
         />
       </div>
@@ -51,13 +59,15 @@ const ReceiptItem = ({ itemsOptArray,deleteReceiptItemData, idx, updateReceiptIt
           type="number"
           id="number-inputp"
           aria-describedby="helper-text-explanation"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+            item.price === "" ? "bg-red-200 border-red-500" : ""
+          } `}
           value={item.price}
           onChange={(e) => {
             var total = updateReceiptItemData(idx, "price", e.target.value);
             setTotal(total);
           }}
-          placeholder="90210"
+          placeholder="Price"
           required
         />
       </div>
