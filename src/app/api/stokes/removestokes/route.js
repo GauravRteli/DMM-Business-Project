@@ -5,6 +5,7 @@ import { connectDb } from "@/database/db";
 export async function POST(request) {
   await connectDb();
   const { itemId, quantity } = await request.json();
+  console.log("removestokes", itemId, quantity);
   try {
     const itemToChange = await ItemSchema.findById(itemId);
     if (itemToChange.StokePresent < quantity) {

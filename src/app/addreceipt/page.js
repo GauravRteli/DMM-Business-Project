@@ -4,6 +4,7 @@ import { getAllItems } from "@/app/utils/apiFunc";
 import ReceiptItem from "../components/ReceiptItem";
 import { validateReceipt } from "../utils/formvalidation";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 const AddReceipt = () => {
   const [itemsOptArray, setItemsOptArray] = useState({
     items: [],
@@ -24,10 +25,6 @@ const AddReceipt = () => {
     },
     total: 0,
   });
-
-  useEffect(() => {
-    console.log(receiptData);
-  }, [receiptData]);
 
   const countTotalCharges = (tot) => {
     var totalCharges =
@@ -58,7 +55,7 @@ const AddReceipt = () => {
       items: updatingItems,
       charges: {
         ...receiptData.charges,
-        total: parseFloat(totalCharges),
+        total: parseFloat(totalCharges).toFixed(2),
       },
       total: parseFloat(tot),
     });
@@ -77,7 +74,7 @@ const AddReceipt = () => {
       items: filteredItems,
       charges: {
         ...receiptData.charges,
-        total: totalCharges,
+        total: totalCharges.toFixed(2),
       },
       total: parseFloat(tot),
     });
@@ -104,11 +101,59 @@ const AddReceipt = () => {
   const addReceipt = async () => {
     if (validateReceipt(receiptData)) {
       toast.success("The Receipt is Valid !");
-    } else {
-      toast.error("Plz fill up the red blocks !",{
-        ariaLive: 'assertive'
+      var updatedItemArray = Array.from(receiptData.items, (item) => {
+        return {
+          price: parseFloat(item.price),
+          quantity: parseFloat(item.quantity),
+          item: item.item.value,
+        };
       });
+      var updatedReceiptData = {
+        ...receiptData,
+        items: updatedItemArray,
+        charges: {
+          GST: parseFloat(receiptData.charges.GST),
+          packageCharges: parseFloat(receiptData.charges.packageCharges),
+          total: parseFloat(receiptData.charges.total),
+        },
+        paymentStatus: {
+          status: "pending",
+          paid: parseFloat(receiptData.paymentStatus.paid),
+        },
+        total: parseFloat(receiptData.total),
+      };
+      const response = await axios.post(
+        "http://localhost:3000/api/receipts",
+        updatedReceiptData
+      );
+      console.log(response.data);
+      if (response.status === 201) {
+        toast.error(response.data.message);
+      } else {
+        toast.success("SuccessFully the Receipt is added ..!");
+        resetReceiptData();
+      }
+    } else {
+      toast.error("May any block is empty or their no items added !");
     }
+  };
+
+  const resetReceiptData = () => {
+    setReceiptData({
+      nameOfCustomer: "",
+      cityOfCustomer: "",
+      items: [],
+      charges: {
+        GST: 18,
+        packageCharges: 0,
+        total: 0,
+      },
+      paymentStatus: {
+        status: "pending",
+        paid: 0,
+      },
+      total: 0,
+    });
   };
 
   useEffect(() => {
@@ -117,7 +162,7 @@ const AddReceipt = () => {
 
   return (
     <div>
-      <Toaster position="bottom-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <form className=" max-w-7xl mx-auto">
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-5">
@@ -435,6 +480,13 @@ const AddReceipt = () => {
             onClick={addReceipt}
           >
             Add Receipt +
+          </button>
+          <button
+            type="button"
+            className="text-white mb-5 bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={() => resetReceiptData()}
+          >
+            Clear
           </button>
         </div>
       </form>

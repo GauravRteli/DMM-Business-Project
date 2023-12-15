@@ -14,7 +14,7 @@ export async function GET() {
         path: "items.item",
         model: ItemSchema,
       })
-      .select("_id date items total");
+      .select("_id date items charges paymentStatus total");
     console.log(receipts);
     return NextResponse.json(receipts, {
       status: 200,
@@ -30,10 +30,33 @@ export async function GET() {
 
 export async function POST(request) {
   await connectDb();
-  const { nameOfCustomer, cityOfCustomer, charges, items, total } =
-    await request.json();
+  const {
+    nameOfCustomer,
+    cityOfCustomer,
+    charges,
+    paymentStatus,
+    items,
+    total,
+  } = await request.json();
   console.log(items, total);
   try {
+    // check whether the required quantity of items are present or not !
+    var mp = new Map();
+    items.map((i) => {
+      mp.set(i.item.toString(), i.quantity);
+    });
+    const isConsistent = await checkConsistency(mp);
+
+    if (!isConsistent.status) {
+      return NextResponse.json(
+        {
+          message: "required Quantity is not present !",
+          requiredItems: isConsistent.responseArray,
+        },
+        { status: 201 }
+      );
+    }
+
     // first remove the stokes from the items database .....
     items.map(async (i) => {
       try {
@@ -51,6 +74,7 @@ export async function POST(request) {
       cityOfCustomer: cityOfCustomer,
       items: items,
       charges: charges,
+      paymentStatus: paymentStatus,
       total: total,
     });
     const createdReceipt = await receipt.save();
@@ -66,8 +90,15 @@ export async function POST(request) {
 
 export async function PUT(request) {
   await connectDb();
-  const { receiptId, nameOfCustomer, cityOfCustomer, charges, items, total } =
-    await request.json();
+  const {
+    receiptId,
+    nameOfCustomer,
+    cityOfCustomer,
+    paymentStatus,
+    charges,
+    items,
+    total,
+  } = await request.json();
   try {
     // first to check how much more items are needed
     const currReceipt = await ReceiptSchema.findById(receiptId)
@@ -84,9 +115,9 @@ export async function PUT(request) {
     items.map((i) => {
       if (mp.has(i.item.toString())) {
         var currValue = mp.get(i.item.toString());
-        mp.set(i.item.toString(), currValue - i.quantity);
+        mp.set(i.item.toString(), i.quantity - currValue);
       } else {
-        mp.set(i.item.toString(), 0 - i.quantity);
+        mp.set(i.item.toString(), i.quantity - 0);
       }
     });
 
@@ -106,9 +137,9 @@ export async function PUT(request) {
 
     mp.forEach(async (value, key) => {
       if (value < 0) {
-        await updateStokes(key, value * -1, "removestokepresent");
+        await updateStokes(key, value, "removestokepresent");
       } else {
-        await updateStokes(key, value, "addstokepresent");
+        await updateStokes(key, -1 * value, "addstokepresent");
       }
     });
 
@@ -120,6 +151,7 @@ export async function PUT(request) {
         cityOfCustomer: cityOfCustomer,
         items: items,
         charges: charges,
+        paymentStatus: paymentStatus,
         total: total,
       },
       { new: true }
@@ -143,6 +175,7 @@ export async function DELETE(request) {
       await axios.post("http://localhost:3000/api/stokes/addstokes", {
         itemId: i.item.toString(),
         quantity: i.quantity,
+        status: "returnedByCustomer"
       });
     });
     await ReceiptSchema.findByIdAndDelete(receiptId);

@@ -11,7 +11,7 @@ export const checkConsistency = async (receiptItemsToUpdate) => {
   let flag = true;
   receiptItemsToUpdate.forEach((value, key) => {
     if (mpOfItems.has(key)) {
-      if (value < 0 && mpOfItems.get(key)[0] < -1 * value) {
+      if (value > 0 && mpOfItems.get(key)[0] < value) {
         // whether to give more items and to check whether the requirement can be full filled or not .
         responseArray.push(mpOfItems.get(key)[1]);
         flag = false;
@@ -40,7 +40,7 @@ export const addStokesFunc = async (itemId, quantity) => {
     {
       itemId: itemId,
       quantity: quantity,
-      status : "returnedByCustomer"
+      status: "returnedByCustomer",
     }
   );
   return response;
@@ -50,20 +50,26 @@ export const updateStokes = async (itemId, quantity, todo) => {
   var response;
   if (todo === "removestokepresent") {
     response = await removeStokesFunc(itemId, quantity);
-    console.log("buyedByCustomer")
-    response = await axios.put("http://localhost:3000/api/items/updatestokessold", {
-      itemId: itemId,
-      quantity: quantity,
-      status: "buyedByCustomer",
-    });
+    console.log("buyedByCustomer");
+    response = await axios.put(
+      "http://localhost:3000/api/items/updatestokessold",
+      {
+        itemId: itemId,
+        quantity: quantity,
+        status: "buyedByCustomer",
+      }
+    );
   } else if (todo === "addstokepresent") {
     response = await addStokesFunc(itemId, quantity);
-    console.log("returnedByCustomer")
-    response = await axios.put("http://localhost:3000/api/items/updatestokessold", {
-      itemId: itemId,
-      quantity: quantity,
-      status: "returnedByCustomer",
-    });
+    console.log("returnedByCustomer");
+    response = await axios.put(
+      "http://localhost:3000/api/items/updatestokessold",
+      {
+        itemId: itemId,
+        quantity: quantity,
+        status: "returnedByCustomer",
+      }
+    );
   }
 
   return response;

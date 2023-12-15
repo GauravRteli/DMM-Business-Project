@@ -6,11 +6,23 @@ export async function POST(request) {
   await connectDb();
   const { itemId, quantity, status } = await request.json();
   try {
-    var item = await ItemSchema.findByIdAndUpdate(
-      itemId,
-      { $inc: { StokePresent: quantity } },
-      { new: true }
-    );
+    var item;
+
+    if (status === "returnedByCustomer") {
+      console.log("returnedByCustomer");
+      item = await ItemSchema.findByIdAndUpdate(
+        itemId,
+        { $inc: { StokePresent: quantity, StokeSold: -1 * quantity } },
+        { new: true }
+      );
+    } else if (status === "buyedByOwner") {
+      item = await ItemSchema.findByIdAndUpdate(
+        itemId,
+        { $inc: { StokeBuyed: quantity } },
+        { new: true }
+      );
+    }
+
     if (item == null) {
       return NextResponse.json(
         { message: "item not found ..!" },
@@ -19,13 +31,7 @@ export async function POST(request) {
         }
       );
     }
-    if (status === "buyedByOwner") {
-      item = await ItemSchema.findByIdAndUpdate(
-        itemId,
-        { $inc: { StokeBuyed: quantity } },
-        { new: true }
-      );
-    }
+
     return NextResponse.json(item, {
       status: 200,
     });
