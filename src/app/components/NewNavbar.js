@@ -72,7 +72,7 @@ const Navbar = () => {
               <AiOutlineCaretDown />
             </button>
             {menu2Open && (
-              <div className="absolute mt-2 w-36 bg-white rounded p-2 text-center">
+              <div className="absolute mt-2 w-50 bg-white rounded p-2 text-center">
                 <Link
                   href="/addreceipt"
                   className="block border-b-2 px-2 py-1 rounded text-black hover:text-white hover:bg-slate-700 border-slate-300 "
@@ -80,10 +80,10 @@ const Navbar = () => {
                   Add Receipt
                 </Link>
                 <Link
-                  href="#"
+                  href="/showreceipts"
                   className="block border-b-2 px-2 py-1 rounded hover:text-white hover:bg-slate-700 border-slate-300 text-black"
                 >
-                  Show Items
+                  Show Receipts
                 </Link>
               </div>
             )}

@@ -14,7 +14,7 @@ export async function GET() {
         path: "items.item",
         model: ItemSchema,
       })
-      .select("_id date items charges paymentStatus total");
+      .select("_id date items charges paymentStatus total nameOfCustomer cityOfCustomer");
     console.log(receipts);
     return NextResponse.json(receipts, {
       status: 200,
@@ -166,28 +166,29 @@ export async function PUT(request) {
   );
 }
 
-export async function DELETE(request) {
-  const { receiptId } = await request.json();
-  try {
-    const receipt = await ReceiptSchema.findById(receiptId);
+// export async function DELETE(request) {
+//   const { receiptId } = await request.json();
+//   console.log(receiptId);
+//   try {
+//     const receipt = await ReceiptSchema.findById(receiptId);
 
-    receipt.items.forEach(async (i) => {
-      await axios.post("http://localhost:3000/api/stokes/addstokes", {
-        itemId: i.item.toString(),
-        quantity: i.quantity,
-        status: "returnedByCustomer"
-      });
-    });
-    await ReceiptSchema.findByIdAndDelete(receiptId);
-    return NextResponse.json(
-      { message: "Delete the Receipt !" },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log(error);
-  }
-  return NextResponse.json(
-    { message: "Error Occured on server side !" },
-    { status: 500 }
-  );
-}
+//     receipt.items.forEach(async (i) => {
+//       await axios.post("http://localhost:3000/api/stokes/addstokes", {
+//         itemId: i.item.toString(),
+//         quantity: i.quantity,
+//         status: "returnedByCustomer"
+//       });
+//     });
+//     await ReceiptSchema.findByIdAndDelete(receiptId);
+//     return NextResponse.json(
+//       { message: "Delete the Receipt !" },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     console.log(error);
+//   }
+//   return NextResponse.json(
+//     { message: "Error Occured on server side !" },
+//     { status: 500 }
+//   );
+// }

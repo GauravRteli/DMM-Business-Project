@@ -18,7 +18,7 @@ export async function POST(request) {
     } else if (status === "buyedByOwner") {
       item = await ItemSchema.findByIdAndUpdate(
         itemId,
-        { $inc: { StokeBuyed: quantity } },
+        { $inc: { StokeBuyed: quantity, StokePresent: quantity } },
         { new: true }
       );
     }

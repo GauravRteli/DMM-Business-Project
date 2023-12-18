@@ -4,11 +4,13 @@ import { getAllItems } from "@/app/utils/apiFunc";
 import ReceiptItem from "../components/ReceiptItem";
 import { validateReceipt } from "../utils/formvalidation";
 import toast, { Toaster } from "react-hot-toast";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 const AddReceipt = () => {
   const [itemsOptArray, setItemsOptArray] = useState({
     items: [],
   });
+  const [requiredItems, setRequiredItems] = useState(new Map());
 
   const [receiptData, setReceiptData] = useState({
     nameOfCustomer: "",
@@ -67,7 +69,7 @@ const AddReceipt = () => {
       if (index != idx) return item;
       else return null;
     });
-    var { tot, totalCharges } = countTotal(updatingItems);
+    var { tot, totalCharges } = countTotal(filteredItems);
     tot = tot.toFixed(2);
     setReceiptData({
       ...receiptData,
@@ -129,6 +131,14 @@ const AddReceipt = () => {
       console.log(response.data);
       if (response.status === 201) {
         toast.error(response.data.message);
+        const itemsArray = response.data.requiredItems;
+        var dummyMap = new Map();
+        if (Array.isArray(itemsArray)) {
+          itemsArray.map((item) => {
+            dummyMap.set(item.nameofitem, item.StokePresent);
+          });
+        }
+        setRequiredItems(dummyMap);
       } else {
         toast.success("SuccessFully the Receipt is added ..!");
         resetReceiptData();
@@ -155,14 +165,12 @@ const AddReceipt = () => {
       total: 0,
     });
   };
-
   useEffect(() => {
     getItems();
   }, []);
 
   return (
     <div>
-      <Toaster position="top-center" reverseOrder={false} />
       <form className=" max-w-7xl mx-auto">
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-5">
@@ -239,6 +247,7 @@ const AddReceipt = () => {
               updateReceiptItemData={updateReceiptItemData}
               deleteReceiptItemData={deleteReceiptItemData}
               itemsOptArray={itemsOptArray}
+              requiredItems={requiredItems}
             />
           );
         })}
@@ -381,6 +390,11 @@ const AddReceipt = () => {
           <p className="border-b-2 border-slate-400 py-2 text-center text-2xl font-bold mt-5">
             Payment
           </p>
+          <Toaster
+            containerStyle={{
+              position: "relative",
+            }}
+          />
           <div className="flex justify-between items-center py-4">
             <fieldset className="flex space-x-5 p-2">
               <label

@@ -26,6 +26,7 @@ const page = () => {
         itemId: itemData.itemId.value,
       }
     );
+    console.log(itemData);
     if (response.status === 200) {
       toast.success("Successfully Added the Stokes !");
       setItemData({

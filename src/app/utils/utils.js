@@ -7,13 +7,14 @@ export const checkConsistency = async (receiptItemsToUpdate) => {
   currItems.map((i) => {
     mpOfItems.set(i._id.toString(), [i.StokePresent, i.name]);
   });
+  console.log(mpOfItems)
   let responseArray = new Array();
   let flag = true;
   receiptItemsToUpdate.forEach((value, key) => {
     if (mpOfItems.has(key)) {
       if (value > 0 && mpOfItems.get(key)[0] < value) {
         // whether to give more items and to check whether the requirement can be full filled or not .
-        responseArray.push(mpOfItems.get(key)[1]);
+        responseArray.push({nameofitem : mpOfItems.get(key)[1], StokePresent: mpOfItems.get(key)[0]});
         flag = false;
       }
     }
