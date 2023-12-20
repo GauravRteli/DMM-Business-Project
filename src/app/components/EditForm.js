@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import Select from "react-select";
 import { metalOptions } from "../utils/formvalidation";
 import axios from "axios";
 
@@ -36,9 +37,9 @@ const EditForm = ({ editingItem, setEditPopupOpen, updateItemArray }) => {
   };
 
   return (
-    <div className="absolute top-0 text-left left-0 w-full h-full flex items-center justify-center">
-      <p>Edit Item {editingItem.name}</p>
-      <form className="rounded bg-white w-2/5 p-6" onSubmit={handleSubmit}>
+    <div className="absolute top-0 text-left left-0 max-w-screen md:w-full h-full flex flex-col items-center justify-center">
+      <p className="bg-white py-2 px-4 rounded-t-lg text-lg">Edit Item <span className="font-bold text-green-500 text-xl">{editingItem.name}</span></p>
+      <form className="rounded bg-white w-4/5 p-6" onSubmit={handleSubmit}>
         <div className="mb-5">
           <label
             htmlFor="base-input"
@@ -60,7 +61,7 @@ const EditForm = ({ editingItem, setEditPopupOpen, updateItemArray }) => {
             required
           />
         </div>
-        <div className="flex justify-between items-center">
+        <div className="grid grid-cols-3 justify-between items-center">
           <div className="mb-5">
             <label
               htmlFor="item-brand"
@@ -82,6 +83,7 @@ const EditForm = ({ editingItem, setEditPopupOpen, updateItemArray }) => {
               required
             />
           </div>
+          <div></div>
           <div>
             <label
               htmlFor="countries"

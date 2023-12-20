@@ -111,7 +111,6 @@ export async function PUT(request) {
     currReceipt.items.map((i) => {
       mp.set(i.item._id.toString(), i.quantity);
     });
-
     items.map((i) => {
       if (mp.has(i.item.toString())) {
         var currValue = mp.get(i.item.toString());

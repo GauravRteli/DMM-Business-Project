@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
+import EditReceipt from "./EditReceipt";
 
 const ReceiptDetails = ({ receipt, getAllReceipts }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [editDetails, setEditDetails] = useState(false);
 
   const formattedDate = new Date(receipt.date).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -112,8 +114,11 @@ const ReceiptDetails = ({ receipt, getAllReceipts }) => {
           </div>
         </div>
         <div>
-          <strong className="font-semibold">Total:</strong> ₹{receipt.total}
+          <strong className="font-semibold">Total:</strong> ₹{receipt.total + receipt.charges.total}
         </div>
+        {
+          editDetails ? <EditReceipt receiptDetails={receipt} setEditDetails={setEditDetails} /> : <></>
+        }
         <div className="flex justify-between">
           <button
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -124,7 +129,7 @@ const ReceiptDetails = ({ receipt, getAllReceipts }) => {
           <div className="space-x-2">
             <button
               className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-              onClick={() => setShowDetails(!showDetails)}
+              onClick={() => setEditDetails(!editDetails)}
             >
               Edit
             </button>

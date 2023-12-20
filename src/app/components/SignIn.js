@@ -1,7 +1,6 @@
 "use client";
-import Link from "next/link";
 import { HiKey } from "react-icons/hi";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import signinpng from "../../../assets/signinpng.png";
 import Image from "next/image";
 import axios from "axios";
@@ -12,6 +11,8 @@ const Signin = () => {
     email: "",
     password: "",
   });
+  useEffect(() => {
+  },[])
   const router = useRouter()
   const handleSubmit = async (e) => {
     e.preventDefault();
