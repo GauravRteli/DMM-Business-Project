@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import EditReceipt from "./EditReceipt";
+import DeleteReceiptCompo from "./DeleteReceiptCompo";
 
 const ReceiptDetails = ({ receipt, getAllReceipts }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [editDetails, setEditDetails] = useState(false);
+  const [deletePopUp, setDeletePopUp] = useState(false);
 
   const formattedDate = new Date(receipt.date).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -28,11 +30,11 @@ const ReceiptDetails = ({ receipt, getAllReceipts }) => {
 
   return (
     <>
-      <Toaster
+      {/* <Toaster
         containerStyle={{
           position: "relative",
         }}
-      />
+      /> */}
       <div className="max-w-5xl mx-auto bg-white rounded-md overflow-hidden shadow-md p-6 mb-6">
         {/* <h2 className="text-2xl font-semibold mb-4">Receipt Details</h2> */}
         <div className="mb-2">
@@ -117,7 +119,10 @@ const ReceiptDetails = ({ receipt, getAllReceipts }) => {
           <strong className="font-semibold">Total:</strong> ₹{receipt.total + receipt.charges.total}
         </div>
         {
-          editDetails ? <EditReceipt receiptDetails={receipt} setEditDetails={setEditDetails} /> : <></>
+          editDetails ? <EditReceipt getAllReceipts={getAllReceipts} receiptDetails={receipt} setEditDetails={setEditDetails} /> : <></>
+        }
+        {
+          deletePopUp ? <DeleteReceiptCompo setDeletePopup={setDeletePopUp} getAllReceipts={getAllReceipts} receiptDetail={receipt} /> : <></>
         }
         <div className="flex justify-between">
           <button
@@ -135,7 +140,7 @@ const ReceiptDetails = ({ receipt, getAllReceipts }) => {
             </button>
             <button
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
-              onClick={() => deleteReceipt(receipt._id)}
+              onClick={() => setDeletePopUp(true)}
             >
               Delete
             </button>

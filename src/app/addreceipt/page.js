@@ -119,7 +119,7 @@ const AddReceipt = () => {
           total: parseFloat(receiptData.charges.total),
         },
         paymentStatus: {
-          status: "pending",
+          status: receiptData.paymentStatus.status,
           paid: parseFloat(receiptData.paymentStatus.paid),
         },
         total: parseFloat(receiptData.total),

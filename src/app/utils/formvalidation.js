@@ -36,4 +36,5 @@ export const metalOptions = [
   { value: "lead", label: "Lead (सीसा)" },
   { value: "zinc", label: "Zinc (जिंक)" },
   { value: "pewter", label: "Pewter (प्यूटर)" },
+  { value: "wooden", label: "Wooden (लकड़ी का)" }
 ];

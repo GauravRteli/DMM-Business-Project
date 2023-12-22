@@ -8,7 +8,7 @@ import { validateReceipt } from "../utils/formvalidation";
 import toast, { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-const EditReceipt = ({ receiptDetails, setEditDetails }) => {
+const EditReceipt = ({ receiptDetails, setEditDetails, getAllReceipts }) => {
   const [itemsOptArray, setItemsOptArray] = useState({
     items: [],
   });
@@ -103,7 +103,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
     });
   };
 
-  const addReceipt = async () => {
+  const updateReceipt = async () => {
     if (validateReceipt(receiptData)) {
       toast.success("The Receipt is Valid !");
       var updatedItemArray = Array.from(receiptData.items, (item) => {
@@ -122,7 +122,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
           total: parseFloat(receiptData.charges.total),
         },
         paymentStatus: {
-          status: "pending",
+          status: receiptData.paymentStatus.status,
           paid: parseFloat(receiptData.paymentStatus.paid),
         },
         total: parseFloat(receiptData.total),
@@ -144,31 +144,15 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
         }
         setRequiredItems(dummyMap);
       } else {
-        toast.success("SuccessFully the Receipt is added ..!");
-        resetReceiptData();
+        toast.success("SuccessFully the Receipt is Updated ..!");
+        await getAllReceipts();
+        setEditDetails(false);
       }
     } else {
       toast.error("May any block is empty or their no items added !");
     }
   };
 
-  const resetReceiptData = () => {
-    setReceiptData({
-      nameOfCustomer: "",
-      cityOfCustomer: "",
-      items: [],
-      charges: {
-        GST: 18,
-        packageCharges: 0,
-        total: 0,
-      },
-      paymentStatus: {
-        status: "pending",
-        paid: 0,
-      },
-      total: 0,
-    });
-  };
   useEffect(() => {
     getItems();
     console.log(receiptDetails);
@@ -188,6 +172,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
 
   return (
     <div className="absolute top-0 text-left left-0 max-w-screen md:w-full h-full flex flex-col items-center justify-center">
+      
       <form className="rounded bg-white shadow-2xl w-4/5 p-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-5">
@@ -425,7 +410,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
                   id="pending"
                   type="radio"
                   name="pending"
-                  value={"pending"}
+                  value="pending"
                   className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
                   checked={receiptData.paymentStatus.status === "pending"}
                   onChange={(e) => {
@@ -433,7 +418,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
                       ...receiptData,
                       paymentStatus: {
                         ...receiptData.paymentStatus,
-                        status: e.target.value,
+                        status: "pending",
                       },
                     });
                   }}
@@ -450,7 +435,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
                   id="paid"
                   type="radio"
                   name="paid"
-                  value={"paid"}
+                  value="paid"
                   className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
                   checked={receiptData.paymentStatus.status === "paid"}
                   onChange={(e) => {
@@ -458,7 +443,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
                       ...receiptData,
                       paymentStatus: {
                         ...receiptData.paymentStatus,
-                        status: e.target.value,
+                        status: "paid",
                       },
                     });
                   }}
@@ -508,7 +493,7 @@ const EditReceipt = ({ receiptDetails, setEditDetails }) => {
           <button
             type="button"
             className="text-white mb-5 bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            onClick={addReceipt}
+            onClick={updateReceipt}
           >
             Edit
           </button>
